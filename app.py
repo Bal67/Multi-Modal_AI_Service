@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import boto3
 import torch
 import streamlit as st
@@ -7,13 +8,14 @@ import torchvision.transforms as transforms
 from PIL import Image
 from torchvision import models
 from io import BytesIO
+from dotenv import load_dotenv
+import urllib.request
 
-# Ensure you have the necessary AWS credentials set up in your environment
-os.environ["AWS_ACCESS_KEY_ID"] = "YOUR_ACCESS_KEY"
-os.environ["AWS_SECRET_ACCESS_KEY"] = "YOUR_SECRET_KEY"
-os.environ["AWS_REGION"] = "us-east-1"
+# Load environment variables from .env file
+load_dotenv()
 
-region = os.environ["AWS_REGION"]
+# Ensure AWS credentials are available via environment or .env
+region = os.getenv("AWS_REGION", "us-east-1")
 bedrock_model_id = "anthropic.claude-3-sonnet-20240229-v1:0"
 
 # Initialize the Bedrock client
@@ -23,8 +25,9 @@ bedrock_client = boto3.client("bedrock-runtime", region_name=region)
 resnet_model = models.resnet50(pretrained=True)
 resnet_model.eval()
 
-imagenet_labels = [line.strip() for line in open("imagenet_classes.txt")]
-
+# Load ImageNet class labels from GitHub
+imagenet_labels_url = "https://raw.githubusercontent.com/pytorch/hub/master/imagenet_classes.txt"
+imagenet_labels = urllib.request.urlopen(imagenet_labels_url).read().decode("utf-8").splitlines()
 
 # Define the image transformation
 transform = transforms.Compose([
@@ -35,18 +38,22 @@ transform = transforms.Compose([
                          std=[0.229, 0.224, 0.225])
 ])
 
-# Function to analyze the image locally
+# Analyze image locally with timing
 def analyze_image_locally(image_file):
+    start = time.time()
     image = Image.open(image_file).convert("RGB")
     image_tensor = transform(image).unsqueeze(0)
     with torch.no_grad():
         output = resnet_model(image_tensor)
     predicted_class = output.argmax(dim=1).item()
     label = imagenet_labels[predicted_class]
+    duration = time.time() - start
+    print(f"[PERF] Image processed in {duration:.3f} seconds")
     return label
 
-# Function to analyze the text using Claude
+# Analyze text via Claude + Bedrock with timing
 def analyze_text_claude(text, context=""):
+    start = time.time()
     messages = [{"role": "user", "content": f"{text}\n\nContext: {context}"}]
     body = json.dumps({
         "messages": messages,
@@ -61,8 +68,9 @@ def analyze_text_claude(text, context=""):
         accept="application/json"
     )
     result = json.loads(response["body"].read())
+    duration = time.time() - start
+    print(f"[PERF] Claude responded in {duration:.3f} seconds")
     return result.get("content", "No response")
-
 
 # Streamlit app setup
 st.set_page_config(page_title="Claude + ResNet", layout="wide")
