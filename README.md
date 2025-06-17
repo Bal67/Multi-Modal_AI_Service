@@ -6,7 +6,7 @@ This project is a **multi-modal AI assistant** that integrates **AWS Bedrock's C
 
 ## Architecture Overview
 
-![System Architecture](assets/architecture.png)
+![System Architecture](docs/Architecture_MM.png)
 
 ---
 
@@ -26,8 +26,9 @@ Multi-Modal_AI_Service/
 ├── app.py                    # Main Streamlit application
 ├── .env                      # AWS credentials (not included in repo)
 ├── requirements.txt          # Python dependencies
-├── assets/
-│   └── architecture.png      # Architecture diagram
+├── docs/
+│   └── Architecture_MM.png   # Architecture diagram
+│   └── performance.md        # Performance documentation
 └── README.md                 # Project documentation
 ```
 
@@ -99,5 +100,5 @@ This project is released under the [MIT License](LICENSE).
 
 ## Author
 
-Developed by Britt Lester  
+Developed by Britt Leslie 
 GitHub: [Bal67](https://github.com/Bal67)
