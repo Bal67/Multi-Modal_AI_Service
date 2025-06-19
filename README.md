@@ -3,6 +3,11 @@
 This project is a **multi-modal AI assistant** that integrates **AWS Bedrock's Claude 3 Sonnet** for language understanding with **PyTorch’s ResNet-50** model for image classification. Built using **Streamlit**, it allows users to upload images and ask natural language questions in a single unified interface.
 
 ---
+## Demo
+
+![Chatbot Demo](docs/Multi-Modal_Analyzer.gif) 
+
+---
 
 ## Architecture Overview
 
