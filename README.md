@@ -5,7 +5,7 @@ This project is a **multi-modal AI assistant** that integrates **AWS Bedrock's C
 ---
 ## Demo
 
-![Chatbot Demo](docs/Multi-Modal_Analyzer.gif) 
+![Chatbot Demo](docs/multi_modal_analyzer.gif) 
 
 ---
 
